@@ -41,15 +41,21 @@ class JavaQuestionServiceTest {
         return Stream.of(Arguments.of("Чему равна длина гипотенузы у треугольника со сторонами 3 и 4?",
                         "5"),
                 Arguments.of("Кубический корень из 1331?", "11"),
-                Arguments.of(null, "")
+                Arguments.of("Чему равен COS() нуля?", "")
+        );
+    }
+
+    private static Stream<Arguments> getBadParamsForTest() {
+        return Stream.of(Arguments.of("", "11"),
+                Arguments.of("Кубический корень из 1331?", "")
         );
     }
 
     private static Stream<Arguments> getParamsForMethodsWithQbjectVar() {
         fillTestQuestions();
-        return Stream.of(Arguments.of(testQuestions.get(rnd.nextInt(5) + 1)),
+        return Stream.of(Arguments.of(testQuestions.get(rnd.nextInt(6))),
                 Arguments.of(new Question("Что такое бриллиант?", "Алмаз, прошедший процесс огранки")),
-                Arguments.of((Object) null)
+                Arguments.of(new Question("", ""))
         );
     }
 
@@ -57,11 +63,11 @@ class JavaQuestionServiceTest {
     void setUp() {
         testService = new JavaQuestionService();
         fillTestQuestions();
-        testService.addQuestion(testQuestions.get(rnd.nextInt(5) + 1));
-        testService.addQuestion(testQuestions.get(rnd.nextInt(5) + 1));
-        testService.addQuestion(testQuestions.get(rnd.nextInt(5) + 1));
-        testService.addQuestion(testQuestions.get(rnd.nextInt(5) + 1));
-        testService.addQuestion(testQuestions.get(rnd.nextInt(5) + 1));
+        testService.addQuestion(testQuestions.get(4));
+        testService.addQuestion(testQuestions.get(2));
+        testService.addQuestion(testQuestions.get(3));
+        testService.addQuestion(testQuestions.get(0));
+        testService.addQuestion(testQuestions.get(1));
     }
 
     @ParameterizedTest
@@ -78,9 +84,9 @@ class JavaQuestionServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getParamsForMethodsWithQbjectVar")
-    void AddQuestionWithStringsBadArgumentException(Question inpQ) {
-        assertThrows(BadArgumentException.class, () -> testService.addQuestion(inpQ));
+    @MethodSource("getBadParamsForTest")
+    void AddQuestionWithStringsBadArgumentException(String strQuestion, String strAnswer) {
+        assertThrows(BadArgumentException.class, () -> testService.addQuestion(strQuestion, strAnswer));
     }
 
     @ParameterizedTest
@@ -97,7 +103,6 @@ class JavaQuestionServiceTest {
     @Test
     void getRandomQuestionTest() throws JsonProcessingException {
         System.out.println(testService.getRandomQuestion());
-        System.out.println(testService.getRandomQuestion().toJsonString());
         assertTrue(testQuestions.contains(testService.getRandomQuestion()));
     }
 }

@@ -5,8 +5,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.maxvagan.course2.services.ExaminerService;
+import ru.maxvagan.course2.services.impls.JavaQuestionService;
 
+import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.maxvagan.course2.services.impls.JavaQuestionService.toJsonString;
 
 @RestController
 @RequestMapping(path = "/exam")
@@ -17,10 +21,10 @@ public class ExamController {
         this.examiner = examiner;
     }
 
-    @GetMapping(path = "/get", params = "amount")
-    public String getQuestions(@RequestParam("amount") int inpAmountOfQuestion) {
+    @GetMapping(path = "/get")
+    public List<String> getQuestions(@RequestParam(value = "amount") int inpAmountOfQuestion) {
         return examiner.getQuestions(inpAmountOfQuestion).stream()
-                .map(e -> "<tr><h3>" + e.getQuestion() + "</h3></tr>")
-                .collect(Collectors.joining(""));
+                .map(JavaQuestionService::toJsonString)
+                .collect(Collectors.toList());
     }
 }

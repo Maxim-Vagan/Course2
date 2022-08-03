@@ -22,10 +22,15 @@ public class ExaminerServiceImpl implements ExaminerService {
 
     @Override
     public Collection<Question> getQuestions(int amount) {
-        if (amount > questionService.getAllQuestions().size() || amount <= 0) throw new BadRequestException("BAD_REQUEST");
+        int elementsAmount = questionService.getAllQuestions().size();
+        if ((amount > elementsAmount && elementsAmount > 0) || amount <= 0) {
+            throw new BadRequestException("BAD_REQUEST");
+        }
         Set<Question> setOfExamQuestions = new HashSet<>();
-        for (int i=1;i<=amount;i++) {
-            setOfExamQuestions.add(questionService.getRandomQuestion());
+        Question examQuestion = questionService.getRandomQuestion();
+        while (amount > setOfExamQuestions.size()) {
+            setOfExamQuestions.add(examQuestion);
+            examQuestion = questionService.getRandomQuestion();
         }
         return setOfExamQuestions;
     }

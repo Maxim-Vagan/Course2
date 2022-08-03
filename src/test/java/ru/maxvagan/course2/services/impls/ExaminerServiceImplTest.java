@@ -3,26 +3,27 @@ package ru.maxvagan.course2.services.impls;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.maxvagan.course2.exceptions.BadRequestException;
-import ru.maxvagan.course2.services.QuestionService;
 import ru.maxvagan.course2.storeclasses.Question;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ExaminerServiceImplTest {
     @Mock
-    private QuestionService questionServiceMock;
-    private final List<Question> testQuestionCollection = new ArrayList<Question>();;
-    private static final Random rnd = new Random();
+    private JavaQuestionService questionServiceMock;
+    @InjectMocks
+    private ExaminerServiceImpl examService;
+
+    private final List<Question> testQuestionCollection = new ArrayList<Question>();
 
     @BeforeEach
     void setUp() {
@@ -36,15 +37,17 @@ class ExaminerServiceImplTest {
 
     @Test
     void getQuestionsTest() {
-        when(questionServiceMock.getRandomQuestion()).thenReturn(testQuestionCollection.get(rnd.nextInt(3)));
-        assertEquals(testQuestionCollection.get(1), questionServiceMock.getRandomQuestion());
+        when(questionServiceMock.getAllQuestions()).thenReturn(testQuestionCollection);
+        when(questionServiceMock.getRandomQuestion())
+                .thenReturn(testQuestionCollection.get(1),
+                        testQuestionCollection.get(2),
+                        testQuestionCollection.get(0));
+        assertEquals(testQuestionCollection, examService.getQuestions(3));
     }
 
     @Test
     void getQuestionsTestBadRequestExceptionThrow() {
-        when(questionServiceMock.getRandomQuestion())
-                .thenThrow(BadRequestException.class);
-
-        assertThrows(BadRequestException.class, () -> questionServiceMock.getRandomQuestion());
+        when(questionServiceMock.getAllQuestions()).thenReturn(testQuestionCollection);
+        assertThrows(BadRequestException.class, () -> examService.getQuestions(4));
     }
 }
