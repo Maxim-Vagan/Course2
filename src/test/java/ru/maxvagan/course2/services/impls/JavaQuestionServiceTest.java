@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.maxvagan.course2.exceptions.BadArgumentException;
+import ru.maxvagan.course2.exceptions.QuestionNotFoundException;
 import ru.maxvagan.course2.storeclasses.Question;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ class JavaQuestionServiceTest {
         return Stream.of(Arguments.of("Чему равна длина гипотенузы у треугольника со сторонами 3 и 4?",
                         "5"),
                 Arguments.of("Кубический корень из 1331?", "11"),
-                Arguments.of("Чему равен COS() нуля?", "")
+                Arguments.of("Чему равен COS() нуля?", "0")
         );
     }
 
@@ -51,11 +52,17 @@ class JavaQuestionServiceTest {
         );
     }
 
-    private static Stream<Arguments> getParamsForMethodsWithQbjectVar() {
+    private static Stream<Arguments> getGoodParamsForMethodsWithQbjectVar() {
         fillTestQuestions();
         return Stream.of(Arguments.of(testQuestions.get(rnd.nextInt(6))),
-                Arguments.of(new Question("Что такое бриллиант?", "Алмаз, прошедший процесс огранки")),
-                Arguments.of(new Question("", ""))
+                Arguments.of(testQuestions.get(rnd.nextInt(6)))
+        );
+    }
+
+    private static Stream<Arguments> getBadParamsForMethodsWithQbjectVar() {
+        fillTestQuestions();
+        return Stream.of(Arguments.of(new Question("Что такое бриллиант?", "Алмаз, прошедший процесс огранки")),
+                Arguments.of(new Question("Вопрос?", "Ответ!"))
         );
     }
 
@@ -78,7 +85,7 @@ class JavaQuestionServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getParamsForMethodsWithQbjectVar")
+    @MethodSource("getGoodParamsForMethodsWithQbjectVar")
     void AddQuestionWithObjectTest(Question inpQ) {
         assertEquals(inpQ, testService.addQuestion(inpQ));
     }
@@ -90,9 +97,9 @@ class JavaQuestionServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getParamsForMethodsWithQbjectVar")
+    @MethodSource("getBadParamsForMethodsWithQbjectVar")
     void removeQuestionWithObjectTest(Question inpQ) {
-        assertDoesNotThrow(() -> testService.removeQuestion(inpQ));
+        assertThrows(QuestionNotFoundException.class, () -> testService.removeQuestion(inpQ));
     }
 
     @Test
