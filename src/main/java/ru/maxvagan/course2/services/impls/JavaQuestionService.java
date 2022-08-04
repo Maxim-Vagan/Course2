@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.springframework.stereotype.Service;
 import ru.maxvagan.course2.exceptions.BadArgumentException;
 import ru.maxvagan.course2.exceptions.QuestionNotFoundException;
-import ru.maxvagan.course2.services.MyRandomForTesting;
 import ru.maxvagan.course2.services.QuestionService;
 import ru.maxvagan.course2.storeclasses.Question;
 
@@ -15,7 +14,7 @@ import java.util.*;
 @Service
 public class JavaQuestionService implements QuestionService {
     private final Set<Question> questionSet = new HashSet<>();
-    private final MyRandomForTesting MyRand = new MyRandomForTestingImpl();
+    private final Random rnd = new Random();
     private static final ObjectMapper objMapper = new JsonMapper();
 
     public static String toJsonString(Object inpObj){
@@ -63,7 +62,7 @@ public class JavaQuestionService implements QuestionService {
         // Для нормализации (без повторов) возвращаемого Вопроса из пула (Недостаток рандомайзера Рандом)
         // было принято решение самому контролировать уникальность выбора индекса Вопроса из пула
         // путём исключения уже выбранных индексов из технического набора индексов вопросов
-        int idxOfQuestion = MyRand.getRealRandomNextInt (questionSet.size());
+        int idxOfQuestion = rnd.nextInt(questionSet.size());
         return new ArrayList<Question>(questionSet).get(idxOfQuestion);
     }
 }

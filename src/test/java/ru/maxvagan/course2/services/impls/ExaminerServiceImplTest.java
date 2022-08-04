@@ -22,7 +22,6 @@ class ExaminerServiceImplTest {
     private JavaQuestionService questionServiceMock;
     @InjectMocks
     private ExaminerServiceImpl examService;
-
     private final List<Question> testQuestionCollection = new ArrayList<Question>();
 
     @BeforeEach
@@ -39,9 +38,9 @@ class ExaminerServiceImplTest {
     void getQuestionsTest() {
         when(questionServiceMock.getAllQuestions()).thenReturn(testQuestionCollection);
         when(questionServiceMock.getRandomQuestion())
-                .thenReturn(testQuestionCollection.get(2),
+                .thenReturn(testQuestionCollection.get(0),
                         testQuestionCollection.get(1),
-                        testQuestionCollection.get(0));
+                        testQuestionCollection.get(2));
         assertEquals(testQuestionCollection, examService.getQuestions(3));
     }
 

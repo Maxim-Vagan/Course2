@@ -1,17 +1,13 @@
 package ru.maxvagan.course2.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.maxvagan.course2.services.QuestionService;
-import ru.maxvagan.course2.services.impls.JavaQuestionService;
 import ru.maxvagan.course2.storeclasses.Question;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import static ru.maxvagan.course2.services.impls.JavaQuestionService.toJsonString;
+import java.util.Collection;
 
 @RestController
 @RequestMapping(path = "/exam/java")
@@ -23,21 +19,19 @@ public class JavaQuestionController {
     }
 
     @GetMapping
-    public List<String> getQuestions() {
-        return service.getAllQuestions().stream()
-                .map(JavaQuestionService::toJsonString)
-                .collect(Collectors.toList());
+    public Collection<Question> getQuestions() {
+        return service.getAllQuestions();
     }
 
     @GetMapping(path = "/add")
-    public String addQuestion(@RequestParam(value = "question", required = false) String inpQuestion
+    public Question addQuestion(@RequestParam(value = "question", required = false) String inpQuestion
             , @RequestParam(value = "answer", required = false) String inpAnswer){
-        return toJsonString(service.addQuestion(inpQuestion, inpAnswer));
+        return service.addQuestion(inpQuestion, inpAnswer);
     }
 
     @GetMapping(path = "/remove")
-    public String removeQuestion(@RequestParam(value = "question", required = false) String inpQuestion
+    public Question removeQuestion(@RequestParam(value = "question", required = false) String inpQuestion
             , @RequestParam(value = "answer", required = false) String inpAnswer) {
-        return toJsonString(service.removeQuestion(new Question(inpQuestion, inpAnswer)));
+        return service.removeQuestion(new Question(inpQuestion, inpAnswer));
     }
 }
